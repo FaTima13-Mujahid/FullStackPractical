@@ -13,47 +13,56 @@ const { tbregister } = require("../Models/Registration");
 const bcrypt = require('bcrypt');
 
 async function createRegisterAccount(req, res) {
-  const { userName, userEmail, userPassword, userImage, userRole } = req.body;
-
-  // Validation patterns
-  const namePattern = /^[A-Za-z\s]{4,}$/;
- // Name with alphabets ONLY
-  const emailPattern = /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|hotmail\.com)$/; // Only gmail, yahoo, hotmail
-//   const imagePattern = /^(http|https):\/\/[^\s]+(\.jpg|\.jpeg|\.png|\.gif)$/; // URL pattern for images
-
-  // Field validation
-  if (!namePattern.test(userName)) {
-    return res.status(400).send({ error: "Invalid name format" });
-  }
-  if (!emailPattern.test(userEmail)) {
-    return res.status(400).send({ error: "Email must be from gmail, yahoo, or hotmail" });
-  }
-//   if (!imagePattern.test(userImage)) {
-//     return res.status(400).send({ error: "Invalid image URL" });
-//   }
-
-
-  // Email existence check
-  const emailExist = await tbregister.find({ userEmail: userEmail });
-  if (emailExist.length > 0) {
-    return res.status(400).send({ error: "This email is already registered" });
-  }
-
-  // Hash the password
-  const hashedPassword = await bcrypt.hash(userPassword, 10);
-
-  // Create new account
-  const newAccount = await tbregister.create({
+  const {
     userName,
     userEmail,
-    userPassword: hashedPassword,
-    userImage,
-    userRole
-  });
-
-  return res.status(201).send({ data: newAccount });
+    userPassword,
+    userRole,
+    // userImage
+  } = req.body;
+  const userImage = req.file;
+  console.log(userImage);
+  // return res.send({"data" : userImage})
+  const User_Image = userImage.path;
+  const fileID = userImage.filename;
+  const checkData = await userData.find({ userEmail: userEmail });
+  if (checkData.length > 0) return res.send({ error: "Email already Exists" });
+  const namePattern = /^[A-Za-z]{3,}$/; // only alphabets more then 3 letter
+  const emailPattern =
+    /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|hotmail\.com)$/; // Only gmail, yahoo, hotmail
+  //   const imagePattern = /^(http|https):\/\/[^\s]+(\.jpg|\.jpeg|\.png|\.gif)$/; // URL pattern for images
+  //   const rolePattern = /^[A-Za-z]+$/;
+  if (namePattern.test(userName)) {
+    if (emailPattern.test(userEmail)) {
+      const PasswordHash = await bcrypt.hash(userPassword, 10); //----Password Hash
+      try {
+        const Data = await userData.create({
+          userName: userName,
+          userEmail: userEmail,
+          userImage: User_Image,
+          userImageID: fileID,
+          userPassword: PasswordHash,
+          userRole: userRole,
+        });
+        return res.status(201).send({ data: req.body }); //----Successfull
+      } catch (error) {
+        //-----might be Validation Error
+        return res.status(204).send({ error: error.errors });
+      }
+    } else {
+      return res
+        .status(403)
+        .send({ error: "Only gmail, yahoo, hotmail  accepted" });
+    }
+  } else {
+    return res
+      .status(403)
+      .send({
+        error:
+          "Name should contain only Alphabets, length should be more than 3 letters ",
+      });
+  }
 }
-
 
 
 //Method -------  GET

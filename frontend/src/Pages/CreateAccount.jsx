@@ -8,18 +8,17 @@ const CreateAccount = () => {
     // ----Fetching roles from backend
     const fetchingRoles = async () => {
       try {
-        const Response = await fetch("http://localhost:5000/roles");
-        const fetchRoles = await Response.json();
-        if (Response.status === 200) {
-          // Use status 200 for successful request
-          setRoles(fetchRoles); // Ensure you are using the correct data structure here
+        const response = await fetch("http://localhost:5000/roles");
+        const fetchRoles = await response.json();
+        if (response.status === 200) {
+          setRoles(fetchRoles.data); // Ensure the response structure matches the API
         }
       } catch (error) {
-        console.log({ Error: error });
+        console.log("Error fetching roles:", error);
       }
     };
     fetchingRoles();
-  }, [Roles]); // Empty dependency array ensures the effect runs only once when the component mounts.
+  }, []); // Empty dependency array
 
   //--------input fields
   const [UserName, setUserName] = useState("");
@@ -47,19 +46,20 @@ const CreateAccount = () => {
         userRole: UserRole,
       };
       try {
-        const Response = await fetch("http://localhost:5000/", {
+        const Response = await fetch("http://localhost:5000/register", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(newUser),
         });
-        if (Response.status === 201) {
+        if (Response.ok) {
           //-------Respone.status ===201
           alert("User Added");
         }
       } catch (error) {
-        alert(error);
+        console.log("Error:", error); // Log the error for debugging purposes
+        alert("Something went wrong. Please try again.");
       }
     }
   };
@@ -77,7 +77,7 @@ const CreateAccount = () => {
                 <div className="card shadow mb-4">
                   <div className="card-header py-3">Create Account</div>
                   <div className="card-body">
-                    <form onSubmit={HandleSubmit} className="w-50">
+                    <form onSubmit={HandleSubmit} className="w-50 mx-auto col-lg-6 col-md-8 col-sm-10" >
                       <div className="mb-3 mt-2">
                         <label
                           htmlFor="exampleInputEmail1"
@@ -138,10 +138,10 @@ const CreateAccount = () => {
                         >
                           <option value="none">Select Role</option>
                           {Roles && Roles.length > 0 ? (
-                            Roles.map((data, index) => {
+                            Roles.map((list, index) => {
                               return (
-                                <option key={index} value={data.role_name}>
-                                  {data.role_name}
+                                <option key={index} value={list.role_name}>
+                                  {list.role_name}
                                 </option>
                               );
                             })
