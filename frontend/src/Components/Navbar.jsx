@@ -23,8 +23,9 @@ const Navbar = () => {
                 maxHeight: "100px",
                 maxWidth: "240px",
                 marginLeft: "80px",
-              }} // Adjust logo size if needed
-            />
+              }} // Adjust logo size if needed */}
+        />
+           
           </Link>
         </div>
         <div className="collapse navbar-collapse" id="navbarText">

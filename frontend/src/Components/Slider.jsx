@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Slider = () => {
   return (
@@ -41,7 +42,8 @@ const Slider = () => {
                 Effortlessly manage and store your data with MongoDB Atlas
               </p>
               {/* Get Started Button */}
-              <button
+              <Link
+              to="/Account"
                 className="btn btn-lg btn-danger"
                 style={{
                   fontSize: "18px",
@@ -50,7 +52,7 @@ const Slider = () => {
                 }}
               >
                 Get Started
-              </button>
+              </Link>
             </div>
           </div>
         </div>
