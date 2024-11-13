@@ -10,6 +10,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
+
+//------IMAGE
+const { ImageUpload } = require("./Middleware/Uploadimage");
+// const{ImageDelete} = require("./Middlewares/ImageUpload")
+const upload = ImageUpload();
+
+
 //-----db connect
 const { connectionDB } = require("./Config/Database");
 
@@ -32,18 +39,20 @@ const {
 } = require("./Controllers/RegisterController");
 
 
-const { ImageLayer } = require("./Middleware/Uploadimage");
-const upload = ImageLayer();
+
 
 //--- ROLES API ROUTE      GET      CREATE
-app.route("/register").get(getRegisterAccount).post(upload.single("userfile"),createRegisterAccount);
+app
+  .route("/register")
+  .get(getRegisterAccount)
+  .post(upload.single('userImage'), createRegisterAccount);
 
 
 //--- ROLES API ROUTE      DELETE               EDIT
 app
   .route("/register/:id")
   .delete(deleteRegisterAccount)
-  .put(updateRegisterAccount);
+  .put(upload.single('userImage'),updateRegisterAccount);
 
 //--------server listen
 

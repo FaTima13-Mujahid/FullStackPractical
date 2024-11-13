@@ -5,10 +5,10 @@ import { Link } from "react-router-dom";
 
 const Account = () => {
   const [Fetchaccount, setFetchaccount] = useState([]);
-  // const [Roles, setRoles] = useState([]);
+ const [Roles, setRoles] = useState([]);
   // FETCHING ACCOUNT DATA USING API
   useEffect(() => {
-    const handlefetchRoles = async () => {
+    const handlefetchAccounts = async () => {
       try {
         const Response = await fetch("http://localhost:5000/register");
         if (Response.ok) {
@@ -20,9 +20,30 @@ const Account = () => {
         console.error("Error fetching account data:", error);
       }
     };
+    // ----Fetching roles from backend
+    const fetchingRoles = async () => {
+      try {
+        const Response = await fetch("http://localhost:5000/roles");
+        const fetchRoles = await Response.json();
+        if (Response.status === 200) {
+          setRoles(fetchRoles.data);
+        }
+      } catch (error) {
+        console.log({ Error: error });
+      }
+    };
+    fetchingRoles();
 
-    handlefetchRoles();
+    handlefetchAccounts();
   }, []); // Empty dependency array to prevent infinite loop
+
+
+
+
+
+
+
+
 
   // DELETE REGISTRE USING API
   const DeleteAccount = async (id, userName) => {
@@ -67,54 +88,99 @@ const Account = () => {
     setUserEmail(email);
     setUserRole(role);
     // setUserPassword(password)
-    setUserImage(image);
     const modalInstance = new Modal(modalRef.current);
     modalInstance.show();
   };
-  const HandleSubmit = async (e) => {
-    e.preventDefault();
-    if (
-      UserName === "" ||
-      UserEmail === "" ||
-      UserRole === "none" ||
-      UserPassword === "" ||
-      UserImage === ""
-    ) {
-      alert("Fill the form first!");
-    } else {
-      const updateData = {
-        userName: UserName,
-        userEmail: UserEmail,
-        userImage: UserImage,
-        userPassword: UserPassword,
-        userRole: UserRole,
-      };
 
-      try {
-        setUserPassword(""); // Reset password field after submission
-        const response = await fetch(`http://localhost:5000/${UserID}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updateData),
-        });
-
-        const modalInstance = Modal.getInstance(modalRef.current);
-        modalInstance.hide(); // Hide modal after submission
-
-        if (response.ok) {
-          alert("Role Updated");
-        } else {
-          const checkError = await response.json();
-          alert(checkError.error || "Error updating role.");
-        }
-      } catch (error) {
-        setUserPassword(""); // Reset password field in case of error
-        alert(error.message || "An error occurred.");
-      }
-    }
+  //---IMSAGE
+  const [IMG, setIMG] = useState("");
+  const handleImageChange = (e) => {
+    setIMG(URL.createObjectURL(e.target.files[0]));
+    setUserImage(e.target.files[0]);
   };
+//  const HandleSubmit =async (e) => {
+//     e.preventDefault()
+//     if (UserName === "" || UserEmail === "" || UserRole === "none" || UserPassword === "" || UserImage === "") {
+//         alert("Fill the form first!")
+//     }
+//     else {
+//         // const updateData ={
+//         //     userName : UserName,
+//         //     userEmail : UserEmail,
+//         //     userImage : UserImage,
+//         //     userPassword : UserPassword,
+//         //     userRole : UserRole
+//         // }
+//         const updateData = new FormData();
+//         updateData.append('userName', UserName);
+//         updateData.append('userEmail', UserEmail);
+//         updateData.append('userPassword', UserPassword);
+//         updateData.append('userRole', UserRole);
+//         updateData.append('userImage', UserImage);
+//         updateData.append('oldImage', UserImage);
+// try {
+//     setUserPassword('')
+//      const Response = await fetch(`http://localhost:5000/register/${UserID}`, {
+//        method: "PUT",
+//        body: updateData,
+//      });
+//         const modalInstance =  Modal.getInstance(modalRef.current);
+//         modalInstance.hide(); 
+//         if (Response.ok) { //-------Respone.status ====201
+//             alert("Role Updated")
+//           }
+//           else {
+//             const checkerror = await Response.json() //-----Response.status====500
+//             console.log(checkerror.error)
+//           }
+// } catch (error) {
+//     setUserPassword('')
+//     console.log(error)
+// }
+       
+         
+    
+//     }
+// }
+
+
+const HandleSubmit = async (e) => {
+  e.preventDefault();
+  if (
+    UserName === "" ||
+    UserEmail === "" ||
+    UserRole === "none" ||
+    UserPassword === "" ||
+    UserImage === ""
+  ) {
+    alert("Fill the form first!");
+  } else {
+    const updateData = new FormData();
+    updateData.append("userName", UserName);
+    updateData.append("userEmail", UserEmail);
+    updateData.append("userPassword", UserPassword);
+    updateData.append("userRole", UserRole);
+    updateData.append("userImage", UserImage);
+    updateData.append("oldImage", UserImage); // Ensure backend handles this
+
+    try {
+      const Response = await fetch(`http://localhost:5000/register/${UserID}`, {
+        method: "PUT",
+        body: updateData,
+      });
+      const modalInstance = Modal.getInstance(modalRef.current);
+      modalInstance.hide();
+      if (Response.ok) {
+        alert("Role Updated");
+      } else {
+        const checkerror = await Response.json();
+        console.log(checkerror.error);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+};
 
   return (
     <>
@@ -178,8 +244,8 @@ const Account = () => {
                                       src={data.userImage}
                                       alt="User"
                                       style={{
-                                        width: "50px",
-                                        height: "50px",
+                                        width: "120px",
+                                        height: "70px",
                                         borderRadius: "50%",
                                       }}
                                     />
@@ -196,7 +262,7 @@ const Account = () => {
                                           data.userImage
                                         )
                                       }
-                                      className="btn btn-primary btn-sm"
+                                      className="btn btn-outline-success"
                                     >
                                       <i class="fa-solid fa-pen-to-square"></i>
                                     </button>
@@ -231,7 +297,11 @@ const Account = () => {
         {/* Update Modal */}
         <div id="modal_" class="modal fade" ref={modalRef} tabindex="-1">
           <div class="modal-dialog modal-dialog-centered">
-            <form className="w-75" onSubmit={HandleSubmit}>
+            <form
+              className="w-75"
+              enctype="multipart/form-data"
+              onSubmit={HandleSubmit}
+            >
               <div class="modal-content">
                 <div class="modal-header px-4">
                   <h4 class="modal-title text-center">Update Role</h4>
@@ -269,38 +339,66 @@ const Account = () => {
                       aria-describedby="emailHelp"
                     />
                   </div>
-                  <div className="mb-3 mt-2">
-                    <label htmlFor="exampleInputEmail1" className="form-label">
-                      Image
-                    </label>
-                    <input
-                      value={UserImage}
-                      onChange={(e) => setUserImage(e.target.value)}
-                      type="text"
-                      className="form-control"
-                      id="exampleInputEmail1"
-                      aria-describedby="emailHelp"
-                    />
+                  <div className="row mb-3 mt-2">
+                    <div className=" col-9">
+                      <label
+                        htmlFor="exampleInputEmail1"
+                        className="form-label"
+                      >
+                        Image
+                      </label>
+                      <input
+                        name="userImage"
+                        onChange={(e) => handleImageChange(e)}
+                        type="file"
+                        className="form-control"
+                        id="exampleInputEmail1"
+                        aria-describedby="emailHelp"
+                      />
+                    </div>
+                    <div className="col-3 ">
+                      {IMG === "" ? (
+                        <div
+                          style={{
+                            backgroundColor: "#98939378",
+                            width: "100px",
+                            height: "100px",
+                            color: "grey",
+                            fontSize: "13px",
+                          }}
+                          className="px-3 py-4 text-center"
+                        >
+                          No Image selected
+                        </div>
+                      ) : (
+                        <img
+                          style={{ maxWidth: "70px" }}
+                          alt=""
+                          className=" img-thumbnail "
+                          src={IMG}
+                        />
+                      )}
+                    </div>
                   </div>
                   <div className="mb-3 mt-2">
                     <label htmlFor="exampleInputEmail1" className="form-label">
-                      Role
+                      Roless
                     </label>
                     <select
                       value={UserRole}
                       onChange={(e) => setUserRole(e.target.value)}
-                      name=""
-                      id=""
                       className="form-select"
                     >
                       <option value="none">Select Role</option>
-                      {Fetchaccount.map((data, index) => {
-                        return (
-                          <option value={data.Rolename}>
+                      {Roles && Roles.length > 0 ? (
+                        Roles.map((data, index) => (
+                          <option key={index} value={data.role_name}>
                             {data.role_name}
                           </option>
-                        );
-                      })}
+                        ))
+                      ) : (
+                        <option>No roles available</option>
+                      )}
                     </select>
                   </div>
                   <div className="mb-3">
