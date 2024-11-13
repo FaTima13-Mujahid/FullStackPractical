@@ -4,21 +4,21 @@ const CreateAccount = () => {
   //-------Roles
   const [Roles, setRoles] = useState([]);
 
- useEffect(() => {
-   const fetchingRoles = async () => {
-     try {
-       const response = await fetch("http://localhost:5000/roles");
-       const fetchRoles = await response.json();
-       console.log("Fetched roles:", fetchRoles); // Log to see the API response structure
-       if (response.status === 200) {
-         setRoles(fetchRoles.data || fetchRoles); // Adjust according to actual structure
-       }
-     } catch (error) {
-       console.log("Error fetching roles:", error); // Check for any errors
-     }
-   };
-   fetchingRoles();
- }, []);
+  useEffect(() => {
+    const fetchingRoles = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/roles");
+        const fetchRoles = await response.json();
+        console.log("Fetched roles:", fetchRoles); // Log to see the API response structure
+        if (response.status === 200) {
+          setRoles(fetchRoles.data || fetchRoles); // Adjust according to actual structure
+        }
+      } catch (error) {
+        console.log("Error fetching roles:", error); // Check for any errors
+      }
+    };
+    fetchingRoles();
+  }, []);
 
   //--------input fields
   const [UserName, setUserName] = useState("");
@@ -28,98 +28,62 @@ const CreateAccount = () => {
   const [UserImage, setUserImage] = useState("");
 
   //----image
-    const [IMG, setIMG] = useState("");
-    const handleImageChange = (e) => {
-      setIMG(URL.createObjectURL(e.target.files[0]));
-      setUserImage(e.target.files[0]);
-    };
+  const [IMG, setIMG] = useState("");
+  const handleImageChange = (e) => {
+    setIMG(URL.createObjectURL(e.target.files[0]));
+    setUserImage(e.target.files[0]);
+  };
 
-  // const HandleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   if (
-  //     UserName === "" ||
-  //     UserEmail === "" ||
-  //     UserRole === "none" ||
-  //     UserPassword === "" ||
-  //     UserImage === ""
-  //   ) {
-  //     alert("Fill the form first!");
-  //   } else {
-  //     const newUser = {
-  //       userName: UserName,
-  //       userEmail: UserEmail,
-  //       userImage: UserImage,
-  //       userPassword: UserPassword,
-  //       userRole: UserRole,
-  //     };
-  //     try {
-  //       const Response = await fetch("http://localhost:5000/register", {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(newUser),
-  //       });
-  //       if (Response.ok) {
-  //         //-------Respone.status ===201
-  //         alert("User Added");
-  //       }
-  //     } catch (error) {
-  //       console.log("Error:", error); // Log the error for debugging purposes
-  //       alert("Something went wrong. Please try again.");
-  //     }
-  //   }
-  // };
+  //-------------Method : POST
+  //---------------API : "http://localhost:5000/register"
+  //-------------Description : CREATE ACCOUNT
 
+  const HandleSubmit = async (e) => {
+    e.preventDefault();
 
-    const HandleSubmit = async (e) => {
-      e.preventDefault();
-
-      // console.log(UserImage)
-      if (
-        UserName === "" ||
-        UserEmail === "" ||
-        UserRole === "none" ||
-        UserPassword === "" ||
-        UserImage === ""
-      ) {
-        alert("Fill the form first!");
-      } else {
-        const formData = new FormData();
-        formData.append("userName", UserName);
-        formData.append("userEmail", UserEmail);
-        formData.append("userPassword", UserPassword);
-        formData.append("userRole", UserRole);
-        formData.append("userImage", UserImage);
-        // const newUser ={
-        //     userName : UserName,
-        //     userEmail : UserEmail,
-        //     userImage : UserImage,
-        //     userPassword : UserPassword,
-        //     userRole : UserRole
-        // }
-        try {
-          const Response = await fetch("http://localhost:5000/register", {
-            method: "POST",
-            // headers: {
-            //     'Content-Type': "application/json"
-            //   },
-            body: formData,
-          });
-          const ch = await Response.json();
-          console.log(ch);
-          if (Response.status === 201) {
-            //-------Respone.status ===201
-            // toast.success("Role Added")
-            alert("Account Registered!!!");
-          } else {
-            alert(ch);
-          }
-        } catch (error) {
-          alert(error);
+    // console.log(UserImage)
+    if (
+      UserName === "" ||
+      UserEmail === "" ||
+      UserRole === "none" ||
+      UserPassword === "" ||
+      UserImage === ""
+    ) {
+      alert("Fill the form first!");
+    } else {
+      const formData = new FormData();
+      formData.append("userName", UserName);
+      formData.append("userEmail", UserEmail);
+      formData.append("userPassword", UserPassword);
+      formData.append("userRole", UserRole);
+      formData.append("userImage", UserImage);
+      // const newUser ={
+    
+      //     userPassword : UserPassword,
+      //     userRole : UserRole
+      // }
+      try {
+        const Response = await fetch("http://localhost:5000/register", {
+          method: "POST",
+          // headers: {
+          //     'Content-Type': "application/json"
+          //   },
+          body: formData,
+        });
+        const ch = await Response.json();
+        console.log(ch);
+        if (Response.status === 201) {
+          //-------Respone.status ===201
+          // toast.success("Role Added")
+          alert("Account Registered!!!");
+        } else {
+          alert(ch);
         }
+      } catch (error) {
+        alert(error);
       }
-    };
+    }
+  };
 
   return (
     <>
