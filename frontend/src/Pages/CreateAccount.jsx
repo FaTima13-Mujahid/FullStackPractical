@@ -49,16 +49,16 @@ const CreateAccount = () => {
       UserPassword === "" ||
       UserImage === ""
     ) {
-      alert("Fill the form first!");
+      alert("Fill the form field first!");
     } else {
       const formData = new FormData();
       formData.append("userName", UserName);
       formData.append("userEmail", UserEmail);
-      formData.append("userPassword", UserPassword);
+      formData.append("userPassword", UserPassword); // ko formData mein append karte hain.
       formData.append("userRole", UserRole);
       formData.append("userImage", UserImage);
       // const newUser ={
-    
+
       //     userPassword : UserPassword,
       //     userRole : UserRole
       // }

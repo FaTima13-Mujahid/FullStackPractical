@@ -13,6 +13,6 @@ const Roles_model=mongoose.Schema(
 const tbroles = mongoose.model("tbroles", Roles_model)  //"roles"  --tablename
 
 
-
+//export
 module.exports = {tbroles}
 

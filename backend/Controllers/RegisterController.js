@@ -18,54 +18,6 @@ const cloudinary = require("cloudinary").v2;
   });
 
 
-// CREATE ACCOUNT FUNCTION
-// async function createRegisterAccount(req, res) {
-//   const { userName, userEmail, userPassword, userRole } = req.body;
-//   const userImage = req.file;
-  
-//   if (!userImage) {
-//     return res.status(400).json({ error: "File upload failed. Please try again." });
-//   }
-
-//   const User_Image = userImage.path;
-//   const fileID = userImage.filename;
-
-//   // Check if email already exists
-//   const checkData = await tbregister.findOne({ userEmail });
-//   if (checkData) return res.status(400).send({ error: "Email already exists" });
-
-//   // Validation patterns
-//   const namePattern = /^[A-Za-z\s]{3,}$/;
-//   const emailPattern = /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|hotmail\.com)$/;
-
-//   if (!namePattern.test(userName)) {
-//     return res.status(400).send({ error: "Name should contain only alphabets, with more than 3 letters" });
-//   }
-//   if (!emailPattern.test(userEmail)) {
-//     return res.status(400).send({ error: "Only gmail, yahoo, and hotmail are accepted" });
-//   }
-
-//   try {
-//     const PasswordHash = await bcrypt.hash(userPassword, 10);
-//     const Data = await tbregister.create({
-//       userName,
-//       userEmail,
-//       userImage: User_Image,
-//       userImageID: fileID,
-//       userPassword: PasswordHash,
-//       userRole,
-//     });
-//     return res.status(201).send({ "data": Data });
-//   } catch (error) {
-//     return res.status(500).send({ error: error.message });
-//   }
-// }
-
-
-//-------------Method : POST
-//---------------API : "http://localhost:5000/register"
-//-------------Description : CREATE ACCOUNT
-
 async function createRegisterAccount(req, res) {
   const {
     userName,
@@ -222,6 +174,8 @@ async function deleteRegisterAccount(req, res) {
   }
 }
 
+
+// EXPORT 
 module.exports = {
   createRegisterAccount,
   getRegisterAccount,

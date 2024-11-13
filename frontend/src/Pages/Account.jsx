@@ -7,7 +7,8 @@ const Account = () => {
   const [Fetchaccount, setFetchaccount] = useState([]);
   const [Roles, setRoles] = useState([]);
 
-  // FETCHING ACCOUNT DATA USING API
+  // ---------FETCHING ACCOUNT DATA -----------
+  //----------     USING API    ----------------
   useEffect(() => {
     const handlefetchAccounts = async () => {
       try {
@@ -39,7 +40,8 @@ const Account = () => {
     handlefetchAccounts();
   }, []); // Empty dependency array to prevent infinite loop
 
-  //-------------DELETE ACCOUNT
+  // ---------DELETE ACCOUNT DATA -----------
+  //----------     USING API    ----------------
   const DeleteAccount = async (ID, user_Name) => {
     const isConfirmed = window.confirm(
       `Are you sure you want to delete the account "${user_Name}"?`
@@ -66,7 +68,8 @@ const Account = () => {
     }
   };
 
-  //------------Update Modal Logic
+  // ---------UPDATE MODAL DATA -----------
+  //----------  USING API & CLOUD   ---------
   const modalRef = useRef(null);
   const [UserID, setUserID] = useState("");
   const [UserName, setUserName] = useState("");
@@ -90,12 +93,17 @@ const Account = () => {
     modalInstance.show();
   };
 
-  const handleImageChange = (e) => {
+  // ---------HANDLE IMAGE CHANGE -----------
+  //----------     USING SETESTATE    ----------------
+  const funcImageChange = (e) => {
     setIMG(URL.createObjectURL(e.target.files[0]));
     setUserImage(e.target.files[0]);
   };
 
-  const HandleSubmit = async (e) => {
+  // ---------DATA In MODAL UPDATE -----------
+  //----------     USING     ----------------
+
+  const handleUpdateSubmit = async (e) => {
     e.preventDefault();
     if (
       !UserName ||
@@ -130,13 +138,14 @@ const Account = () => {
     }
 
     try {
+      //API
       const response = await fetch(`http://localhost:5000/register/${UserID}`, {
-        method: "PUT",
-        body: IMG === OldImage ? JSON.stringify(updateData) : updateData,
-        headers:
+        method: "PUT",  //1
+        body: IMG === OldImage ? JSON.stringify(updateData) : updateData,  //2
+        headers: //3
           IMG === OldImage ? { "Content-Type": "application/json" } : undefined,
       });
-
+//hide modal
       const modalInstance = Modal.getInstance(modalRef.current);
       modalInstance.hide();
 
@@ -166,12 +175,15 @@ const Account = () => {
         <div className="card-header py-3">
           <Link
             to="/CreateAccount"
-            className="btn btn-primary btn-sm float-right"
+            className="btn btn-outline-danger btn-sm float-left"
           >
             <i className="fa fa-plus"></i> Add New
           </Link>
         </div>
         <div className="card-body">
+          {/* TABLE  START*/}
+
+          {/* <h5 className="">Accounts Data</h5> */}
           <div className="table-responsive">
             <table
               className="table table-bordered"
@@ -189,7 +201,8 @@ const Account = () => {
                 </tr>
               </thead>
               <tbody>
-                {Fetchaccount.length > 0 ? (
+                {/* ----------------ACCOUNT DATA  START----------- */}
+                {Fetchaccount.length > 0 ? ( //len zada ha to DATA nhi to no account
                   Fetchaccount.map((data, index) => {
                     const i = index + 1;
                     return (
@@ -197,7 +210,12 @@ const Account = () => {
                         <td className="text-center">{i}</td>
                         <td className="text-center">{data.userName}</td>
                         <td className="text-center">{data.userEmail}</td>
-                        <td className="text-center">{data.userRole}</td>
+                        <td
+                          className="text-center"
+                          style={{ color: "gray", fontWeight: "bold" }}
+                        >
+                          {data.userRole}
+                        </td>
                         <td className="text-center">
                           <img
                             src={data.userImage}
@@ -222,7 +240,7 @@ const Account = () => {
                                 data.userImage
                               )
                             }
-                            className="btn btn-outline-success"
+                            className="btn btn-outline-success me-2"
                           >
                             <i className="fa-solid fa-pen-to-square"></i>
                           </button>
@@ -245,19 +263,21 @@ const Account = () => {
                     </td>
                   </tr>
                 )}
+                {/* ----------------ACCOUNT DATA  END----------- */}
               </tbody>
             </table>
           </div>
+          {/* TABLE END */}
         </div>
       </div>
 
-      {/* Update Modal */}
+      {/* UPDATE MODAL START*/}
       <div id="modal_" className="modal fade" ref={modalRef} tabIndex="-1">
         <div className="modal-dialog modal-dialog-centered">
           <form
             className="w-75"
             encType="multipart/form-data"
-            onSubmit={HandleSubmit}
+            onSubmit={handleUpdateSubmit}
           >
             <div className="modal-content">
               <div className="modal-header px-4">
@@ -303,7 +323,7 @@ const Account = () => {
                   <input
                     value={UserPassword}
                     onChange={(e) => setUserPassword(e.target.value)}
-                    type="password"
+                    type="text"
                     className="form-control"
                     required
                   />
@@ -333,7 +353,7 @@ const Account = () => {
                   <label className="form-label">Image</label>
                   <input
                     type="file"
-                    onChange={handleImageChange}
+                    onChange={funcImageChange}
                     className="form-control"
                   />
                   {IMG && (
@@ -365,6 +385,7 @@ const Account = () => {
           </form>
         </div>
       </div>
+      {/* UPDATE MODAL END*/}
     </div>
   );
 };
