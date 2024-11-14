@@ -38,10 +38,63 @@ const CreateAccount = () => {
   //---------------API : "http://localhost:5000/register"
   //-------------Description : CREATE ACCOUNT
 
+  // const HandleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   // console.log(UserImage)
+  //   if (
+  //     UserName === "" ||
+  //     UserEmail === "" ||
+  //     UserRole === "none" ||
+  //     UserPassword === "" ||
+  //     UserImage === ""
+  //   ) {
+  //     alert("Fill the form field first!");
+  //   } else {
+  //     const formData = new FormData();
+  //     formData.append("userName", UserName);
+  //     formData.append("userEmail", UserEmail);
+  //     formData.append("userPassword", UserPassword); // ko formData mein append karte hain.
+  //     formData.append("userRole", UserRole);
+  //     formData.append("userImage", UserImage);
+  //     // const newUser ={
+
+  //     //     userPassword : UserPassword,
+  //     //     userRole : UserRole
+  //     // }
+  //     try {
+  //       const Response = await fetch("http://localhost:5000/register", {
+  //         method: "POST",
+  //         // headers: {
+  //         //     'Content-Type': "application/json"
+  //         //   },
+  //         body: formData,
+  //       });
+  //       const ch = await Response.json();
+  //       console.log(ch);
+  //       if (Response.status === 201) {
+  //         //-------Respone.status ===201
+  //         // toast.success("Role Added")
+  //         alert("Account Registered!!!");
+  //       } else {
+  //         alert(ch);
+  //       }
+  //     } catch (error) {
+  //       alert(error);
+  //     }
+  //   }
+  // };
+
+
   const HandleSubmit = async (e) => {
     e.preventDefault();
 
-    // console.log(UserImage)
+    // Regular expression patterns
+  const namePattern = /^[A-Za-z ]{3,}$/; // Only alphabets, min length 3
+    const emailPattern =
+      /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|hotmail\.com)$/; // Specific email domains
+
+    // Check if any field is empty
     if (
       UserName === "" ||
       UserEmail === "" ||
@@ -49,39 +102,46 @@ const CreateAccount = () => {
       UserPassword === "" ||
       UserImage === ""
     ) {
-      alert("Fill the form field first!");
-    } else {
-      const formData = new FormData();
-      formData.append("userName", UserName);
-      formData.append("userEmail", UserEmail);
-      formData.append("userPassword", UserPassword); // ko formData mein append karte hain.
-      formData.append("userRole", UserRole);
-      formData.append("userImage", UserImage);
-      // const newUser ={
+      alert("Fill the form fields first!");
+      return;
+    }
 
-      //     userPassword : UserPassword,
-      //     userRole : UserRole
-      // }
-      try {
-        const Response = await fetch("http://localhost:5000/register", {
-          method: "POST",
-          // headers: {
-          //     'Content-Type': "application/json"
-          //   },
-          body: formData,
-        });
-        const ch = await Response.json();
-        console.log(ch);
-        if (Response.status === 201) {
-          //-------Respone.status ===201
-          // toast.success("Role Added")
-          alert("Account Registered!!!");
-        } else {
-          alert(ch);
-        }
-      } catch (error) {
-        alert(error);
+    // Validate userName
+    if (!namePattern.test(UserName)) {
+      alert(
+        "Name should contain only alphabets and be at least 3 letters long."
+      );
+      return;
+    }
+
+    // Validate userEmail
+    if (!emailPattern.test(UserEmail)) {
+      alert("Only Gmail, Yahoo, or Hotmail addresses are accepted.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("userName", UserName);
+    formData.append("userEmail", UserEmail);
+    formData.append("userPassword", UserPassword);
+    formData.append("userRole", UserRole);
+    formData.append("userImage", UserImage);
+
+    try {
+      const Response = await fetch("http://localhost:5000/register", {
+        method: "POST",
+        body: formData,
+      });
+      const dataa = await Response.json();
+      console.log(dataa);
+
+      if (Response.status === 201) {
+        alert("Account Registered!!!");
+      } else {
+        alert(dataa.error || "An error occurred while registering.");
       }
+    } catch (error) {
+      alert("Error:", error.message);
     }
   };
 

@@ -33,7 +33,8 @@ async function createRegisterAccount(req, res) {
   const fileID = userImage.filename;
   const checkData = await tbregister.find({ userEmail: userEmail });
   if (checkData.length > 0) return res.send({ error: "Email already Exists" });
-  const namePattern = /^[A-Za-z]{3,}$/; // only alphabets more then 3 letter
+  const namePattern = /^[A-Za-z ]{3,}$/;
+  // const namePattern = /^[A-Za-z]{3,}$/; // only alphabets more then 3 letter
   const emailPattern =
     /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|hotmail\.com)$/; // Only gmail, yahoo, hotmail
   //   const imagePattern = /^(http|https):\/\/[^\s]+(\.jpg|\.jpeg|\.png|\.gif)$/; // URL pattern for images
@@ -111,8 +112,8 @@ async function updateRegisterAccount(req, res) {
     User_Image = useroldImage;
     fileID = Imagefilename;
   }
-
-  const namePattern = /^[A-Za-z]{3,}$/; // only alphabets more then 3 letter
+const namePattern = /^[A-Za-z ]{3,}$/;
+  // const namePattern = /^[A-Za-z]{3,}$/; // only alphabets more then 3 letter
   const emailPattern =
     /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|hotmail\.com)$/; // Only gmail, yahoo, hotmail
   const PasswordHash = await bcrypt.hash(userPassword, 10); //----Password Hash

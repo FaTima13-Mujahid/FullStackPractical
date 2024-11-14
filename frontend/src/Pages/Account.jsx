@@ -105,6 +105,13 @@ const Account = () => {
 
   const handleUpdateSubmit = async (e) => {
     e.preventDefault();
+
+    // Regex patterns jo backend mein hain
+    const namePattern = /^[A-Za-z ]{3,}$/; // Sirf alphabets aur kam az kam 3 letters
+    const emailPattern =
+      /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|hotmail\.com)$/; // Sirf gmail, yahoo, hotmail
+
+    // Validation ke saath field check
     if (
       !UserName ||
       !UserEmail ||
@@ -114,10 +121,19 @@ const Account = () => {
     ) {
       alert("Please fill all fields.");
       return;
+    } else if (!namePattern.test(UserName)) {
+      alert(
+        "Name should contain only alphabets, length should be more than 3 letters."
+      );
+      return;
+    } else if (!emailPattern.test(UserEmail)) {
+      alert("Only gmail, yahoo, or hotmail emails are accepted.");
+      return;
     }
 
     let updateData;
 
+    // Agar image nahi change hui toh JSON object mein existing image ka data bhejta hai
     if (IMG === OldImage) {
       updateData = {
         userName: UserName,
@@ -128,6 +144,7 @@ const Account = () => {
         Imagefilename: Imagefilename,
       };
     } else {
+      // Agar new image upload hui hai toh FormData ka use karke data bheje
       updateData = new FormData();
       updateData.append("userName", UserName);
       updateData.append("userEmail", UserEmail);
@@ -138,20 +155,21 @@ const Account = () => {
     }
 
     try {
-      //API
+      // Update request API ko bhej raha hai
       const response = await fetch(`http://localhost:5000/register/${UserID}`, {
-        method: "PUT",  //1
-        body: IMG === OldImage ? JSON.stringify(updateData) : updateData,  //2
-        headers: //3
+        method: "PUT",
+        body: IMG === OldImage ? JSON.stringify(updateData) : updateData,
+        headers:
           IMG === OldImage ? { "Content-Type": "application/json" } : undefined,
       });
-//hide modal
+
+      // Modal ko hide kar raha hai
       const modalInstance = Modal.getInstance(modalRef.current);
       modalInstance.hide();
 
       if (response.ok) {
+        // Update success message
         alert(`User ${UserName} Updated`);
-        // Optionally refresh the account list
         const updatedAccount = await response.json();
         setFetchaccount(
           Fetchaccount.map((account) =>
