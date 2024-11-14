@@ -13,7 +13,6 @@ app.use(cors());
 
 //------IMAGE
 const { ImageUpload } = require("./Middleware/Uploadimage");
-// const{ImageDelete} = require("./Middlewares/ImageUpload")
 const upload = ImageUpload();
 
 

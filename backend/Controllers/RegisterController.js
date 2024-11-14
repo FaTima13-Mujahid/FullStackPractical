@@ -34,11 +34,10 @@ async function createRegisterAccount(req, res) {
   const checkData = await tbregister.find({ userEmail: userEmail });
   if (checkData.length > 0) return res.send({ error: "Email already Exists" });
   const namePattern = /^[A-Za-z ]{3,}$/;
-  // const namePattern = /^[A-Za-z]{3,}$/; // only alphabets more then 3 letter
+  // const namePattern = /^[A-Za-z]{3,}$/; // only alphabets more then 3 letter AND SPACE
   const emailPattern =
     /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|hotmail\.com)$/; // Only gmail, yahoo, hotmail
-  //   const imagePattern = /^(http|https):\/\/[^\s]+(\.jpg|\.jpeg|\.png|\.gif)$/; // URL pattern for images
-  //   const rolePattern = /^[A-Za-z]+$/;
+ 
   if (namePattern.test(userName)) {
     if (emailPattern.test(userEmail)) {
       const PasswordHash = await bcrypt.hash(userPassword, 10); //----Password Hash
@@ -51,14 +50,15 @@ async function createRegisterAccount(req, res) {
           userPassword: PasswordHash,
           userRole: userRole,
         });
+
         return res.status(201).send({ data: req.body }); //----Successfull
       } catch (error) {
-        //-----might be Validation Error
+        //-----forbidden 204
         return res.status(204).send({ error: error.errors });
       }
     } else {
       return res
-        .status(403)
+        .status(403) //-----forbidden 204
         .send({ error: "Only gmail, yahoo, hotmail  accepted" });
     }
   } else {
